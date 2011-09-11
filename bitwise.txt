@@ -1,0 +1,168 @@
+TRUTH TABLES
+============
+
+AND (conjunction)
+A B A&B
+-------
+0 0 0
+0 1 0
+1 0 0
+1 1 1
+
+OR (disjunction)
+A B A|B
+-------
+0 0 0
+0 1 1
+1 0 1
+1 1 1
+
+XOR (exclusive disjunction)
+A B A^B
+-------
+0 0 0
+0 1 1
+1 0 1
+1 1 0
+
+NOT (negation)
+A !A
+----
+1 0
+
+NAND (universal)
+A B !(A&B)
+----------
+0 0 1
+0 1 1
+1 0 1
+1 1 0
+
+NOR (universal)
+A B !(A|B)
+----------
+0 0 1
+0 1 0
+1 0 0
+1 1 0
+
+XNOR
+A B !(A^B)
+----------
+0 0 1
+0 1 0
+1 0 0
+1 1 1
+
+
+XOR MAGIC
+=========
+
+The bitwise XOR operation has many useful properties, all of which stem
+from one of four basic theorems:
+
+A^A=0                (1)
+A^0=0                (2)
+A^B=B^A              (3)
+(A^B)^C = A^(B^C)    (4)
+
+Zero Out A Value
+Theorem 1 gives a useful mechanism for zeroing out a value; anything XOR'ed
+with itself is zero. 
+
+Even or Odd Bits
+The XOR of N bits is true iff an odd number of the bits are true.  In a
+cumulative XOR operation, the presence of a true bit will keep the
+cumulative XOR true until another true bit is encountered, whereby the
+result flips to zero.
+
+Equality
+Due to the fact that A^B = 0 iff A=B, Theorem 1 can be used to determine
+wheter two bit sequences are the same.
+
+RAID Property
+XOR has a very interesting property that is used in the implementations of
+RAID systems.  For lack of a better term, I call this the RAID property.
+As an example, given bit sequences A, B, and C = A^B
+
+C=A^B
+A=B^C
+B=C^A
+
+Thus if you have two bit sequences and their XOR, you can use the XOR of
+any two to reconstruct the third.  This can be extended to any number of
+bit sequences, as in the "missing number" example below.
+
+Missing Number in a Sequence
+Given a list of all k bit numbers in random order, find the missing number.
+This can be done by finding the cumulative XOR of all numbers from 0..2**k
+
+A = 0^1^2^3..^2**k
+
+and then finding the cumulative XOR of the list which has the missing
+number
+
+B = 0^1^..(missing number)..^2**k
+
+Given this procedure, the missing number is simply A^B.
+
+XOR Swap Algorithm
+The XOR may be used to swap two variables without the need for additional
+storage using the following three steps:
+
+A=A^B
+B=A^B
+A=A^B
+
+Poor Man's Encryption
+Due to the Theorems 1-3, XOR logic can be used as a kind of "poor man's
+encryption".  Given a bit sequence A, and a key of equal length B, The
+encrypted sequence is then given as A^B.  To decode, simply XOR the result
+by B again to get A.
+
+(A^B)^B = A^(B^B)
+= A^0
+= A
+
+
+OR
+==
+
+Round Up to a Power of Two
+OR logic presents an easy way to round up to nearest power of 2.  Example:
+
+int i,j;
+int n=223; /* number you want to round */
+int bits=log2(8*sizeof(int)); /* number of bits in your number */
+
+n--;
+for(j=1,i=0;i<bits;++i,j=j<<1){
+ n|=(n>>j);
+}
+n++;
+printf("%d\n",n); /* rounded number */
+
+AND
+===
+
+Power of Two
+A is a power of two iff A&(A-1)==0.  Example:
+
+A   = 16 = 1 0 0 0 0
+A-1 = 15 = 0 1 1 1 1
+A&(A-1)  = 0 0 0 0 0 == 0
+
+A   = 14 = 0 1 1 1 0
+A-1 = 13 = 0 1 1 0 1
+A&(A-1)  = 0 1 1 0 0 != 0
+
+BIT SHIFT
+=========
+
+Divide/Multiply by Two
+Since bits are inherently binary, a bit shift represents a quick way to
+divide or multiply by two
+
+A/2 == A>>1;
+A*2 == A<<1;
+
